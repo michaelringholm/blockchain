@@ -1,35 +1,25 @@
+'use strict';
 const SHA256 = require('crypto-js/sha256');
 
 class Block {
 	
-	constructor(index, creationTime, data, previousHash = ''){
+	constructor(index, creationTime, data, previousHash = ""){
 		this.index = index;
 		this.creationTime = creationTime;
 		this.data = data;
 		this.previousHash = previousHash;
 		this.hash = this.calculateHash();
-		this.nonce = 0; // Used to force new hash generation
 	}
 	
 	// npm install -- save crypto-js
 	calculateHash() {
-		return SHA256(this.inde + this.previousHash + this.creationTime + JSON.stringify(this.data) + this.nonce).toString();
+		return SHA256(this.inde + this.previousHash + this.creationTime + JSON.stringify(this.data)).toString();
 	}
-	
-	mineBlock(difficulty) {
-		while(this.hash.substring(0, difficulty) !== Array(difficulty+1).join("0")) {
-			this.nonce++;
-			this.hash = this.calculateHash();
-		}
-		
-		console.log("Block mined: " + this.hash);
-	}	
 }
 
 class Blockchain {
 	constructor() {
 		this.chain = [this.createGenesisBlock()];
-		this.difficulty = 4;
 	}
 	
 	createGenesisBlock() {
@@ -43,7 +33,6 @@ class Blockchain {
 	addBlock(newBlock) {
 		newBlock.previousHash = this.getLatestBlock().hash;
 		newBlock.hash = newBlock.calculateHash();
-		//newBlock.mineBlock(this.difficulty);
 		this.chain.push(newBlock);
 	}
 	
@@ -62,54 +51,14 @@ class Blockchain {
 		}
 		
 		return true;
-	}
-	
-	// proof of work (mining)
-	
-	// peer to peer sync
+	}	
 }
 
-// Example 1
-console.log("Example 1");
+// Example 3
+console.log("Example 3 - Change some data");
 let myBlockchain = new Blockchain();
 myBlockchain.addBlock(new Block(1, "10/07/2017", { ammount: 4 }));
 myBlockchain.addBlock(new Block(2, "14/09/2017", { ammount: 7 }));
-
-console.log(JSON.stringify(myBlockchain, null, 4));
-console.log("-----------------------------");
-
-/*
-// Example 2
-console.log("Example 2");
-myBlockchain = new Blockchain();
-myBlockchain.addBlock(new Block(1, "10/07/2017", { ammount: 4 }));
-myBlockchain.addBlock(new Block(2, "14/09/2017", { ammount: 7 }));
-console.log("Is Blockchain valid?", myBlockchain.isChainValid());
-console.log("-----------------------------");
-
-// Example 3
-console.log("Example 3");
-myBlockchain = new Blockchain();
-myBlockchain.addBlock(new Block(1, "10/07/2017", { ammount: 4 }));
-myBlockchain.addBlock(new Block(2, "14/09/2017", { ammount: 7 }));
 myBlockchain.chain[1].data = {amount : 100};
 console.log("Is Blockchain valid?", myBlockchain.isChainValid());
 console.log("-----------------------------");
-
-// Example 4
-console.log("Example 4");
-myBlockchain = new Blockchain();
-myBlockchain.addBlock(new Block(1, "10/07/2017", { ammount: 4 }));
-myBlockchain.addBlock(new Block(2, "14/09/2017", { ammount: 7 }));
-myBlockchain.chain[1].data = {amount : 100};
-myBlockchain.chain[1].hash = myBlockchain.chain[1].calculateHash();
-console.log("Is Blockchain valid?", myBlockchain.isChainValid());
-console.log("-----------------------------");
-
-// Example 5
-console.log("Example 4");
-myBlockchain = new Blockchain();
-myBlockchain.addBlock(new Block(1, "10/07/2017", { ammount: 6 }));
-myBlockchain.addBlock(new Block(2, "14/09/2017", { ammount: 12 }));
-console.log("-----------------------------");
-*/
